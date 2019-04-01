@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:minHeight="400dp"
     tools:context=".file_dialog.FileDialogFragment">
 
     <TextView
@@ -22,16 +23,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
+        <TextView
+            android:id="@+id/tv_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:text="Up" />
+
+        <TextView
+            android:id="@+id/tv_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:textColor="@color/black"
             android:text="Ok"/>
 
-        <Button
+        <TextView
+            android:id="@+id/tv_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="20dp"
+            android:textColor="@color/black"
             android:text="Cancel"/>
 
     </LinearLayout>

@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.text.SimpleDateFormat;
 
 import eremeew_ilya.file_dilaog.R;
 
@@ -39,7 +41,12 @@ public class FilesSD_Adapter extends BaseAdapter
     protected File []list_root_files;
 
     // Текущая корневая папка
-    File root_dir;
+    protected File root_dir;
+
+    protected boolean show_files; // true -показать файлы, иначе только директории
+    protected String [] array_filter; // filter -массив строк, расширений файлов.
+
+    protected Filter file_filter;
 
     // Конструктор с корнем в корне SD
     public FilesSD_Adapter(Context context)
@@ -50,7 +57,9 @@ public class FilesSD_Adapter extends BaseAdapter
 
         root_dir = getSD_Path();
 
-        list_root_files = root_dir.listFiles();
+        file_filter = new Filter();
+
+        list_root_files = root_dir.listFiles(file_filter);
     }
 
     public File getFile(int index)
@@ -64,12 +73,14 @@ public class FilesSD_Adapter extends BaseAdapter
         if(dir.isDirectory())
         {
             root_dir = dir;
-            list_root_files = root_dir.listFiles();
+            list_root_files = root_dir.listFiles(file_filter);
 
             // Обновляем ListView
             notifyDataSetChanged();
             return true;
         }
+
+        notifyDataSetChanged();
         return false;
     }
 
@@ -88,7 +99,7 @@ public class FilesSD_Adapter extends BaseAdapter
 
         if(newDir.mkdirs())
         {
-            list_root_files = root_dir.listFiles();
+            list_root_files = root_dir.listFiles(file_filter);
 
             // Обновляем ListView
             notifyDataSetChanged();
@@ -101,17 +112,28 @@ public class FilesSD_Adapter extends BaseAdapter
     // Переход на уровень выше
     public boolean cdUp()
     {
-        //Log.i("QWERTY", root_dir.getParent());
         if(root_dir.getAbsolutePath().equals(getSD_Path().getAbsolutePath()))
             return false;
 
         root_dir = new File(root_dir.getParent());
-        list_root_files = root_dir.listFiles();
+        list_root_files = root_dir.listFiles(file_filter);
 
         // Обновляем ListView
         notifyDataSetChanged();
 
         return true;
+    }
+
+    // Параметр true -показать файлы, иначе показать только директории
+    public void setFilter(boolean showFiles)
+    {
+        show_files = showFiles;
+    }
+
+    // Параметр filter -массив строк, расширений файлов. Расширение без точки.
+    public void setFilter(String []filter)
+    {
+        array_filter = filter;
     }
 
     @Override
@@ -142,16 +164,57 @@ public class FilesSD_Adapter extends BaseAdapter
         File file = list_root_files[i];
 
         ((TextView)view.findViewById(R.id.name)).setText(file.getName());
-        TextView type = (TextView)view.findViewById(R.id.type);
+        TextView tv_info = (TextView)view.findViewById(R.id.tv_info);
+
+        String str_info;
         if(file.isDirectory())
         {
-            type.setText("Directory");
+            str_info = "DIR";
         }
         else if(file.isFile())
         {
-            type.setText("File");
+            if(file.length() > 9000)
+            {
+                float f = file.length() / 1024;
+                str_info = Float.toString(f) + "KB";
+            }
+            else
+            {
+                str_info = file.length() + "B";
+            }
+        }
+        else
+        {
+            str_info = "";
         }
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+        tv_info.setText(str_info + "   " + dateFormat.format(file.lastModified()));
+
         return view;
+    }
+
+    //
+    private class Filter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file)
+        {
+            if(!show_files && file.isFile())
+                return false;
+
+            if(array_filter != null && array_filter.length > 0 && file.isFile())
+            {
+                String file_name = file.getName().toLowerCase();
+                for(String filter : array_filter)
+                {
+                    if(file_name.endsWith("." + filter.toLowerCase()))
+                        return true;
+                }
+                return false;
+            }
+
+            return true;
+        }
     }
 }
