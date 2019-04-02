@@ -110,6 +110,13 @@ public class FileDialogFragment extends DialogFragment// implements View.OnClick
         fileDialogListener = listener;
     }
 
+    public boolean setRootPath(File dir)
+    {
+        if(adapter == null)
+            return false;
+        return adapter.setRootPath(dir);
+    }
+
     private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
