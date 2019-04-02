@@ -4,4 +4,9 @@
     <string name="up">Up</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="_new">New</string>
+    <string name="new_dir">New Directory</string>
+    <string name="dir_exits">Directory exits</string>
+    <!-- Не могу создать директорию -->
+    <string name="can_not_create_a_dir">I can not create a directory</string>
 </resources>

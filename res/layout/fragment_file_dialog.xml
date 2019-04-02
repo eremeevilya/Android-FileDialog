@@ -10,7 +10,9 @@
     <TextView
         android:id="@+id/tv_path"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"/>
 
     <ListView
         android:id="@+id/listFiles"
@@ -22,6 +24,15 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_new"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:text="@string/_new" />
 
         <TextView
             android:id="@+id/tv_up"

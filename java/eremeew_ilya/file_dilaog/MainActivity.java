@@ -53,14 +53,11 @@ public class MainActivity extends AppCompatActivity implements FileDialogListene
 
         fileDialog.setFilter(check_files.isChecked());
 
-        String []array_filter = et_filter.getText().toString().split(" ");
-        fileDialog.setFilter(null);
-
-        Log.i("QWERTY", "SIZE: " + array_filter.length);
-        for(String s : array_filter)
-        {
-            Log.i("QWERTY", s);
-        }
+        String s = et_filter.getText().toString();
+        if(s.isEmpty())
+            fileDialog.setFilter(null);
+        else
+            fileDialog.setFilter(s.split(" "));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package eremeew_ilya.file_dilaog.file_dialog;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -8,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -26,6 +30,7 @@ public class FileDialogFragment extends DialogFragment// implements View.OnClick
     private TextView tvUp;
     private TextView tvOk;
     private TextView tvCancel;
+    private TextView tv_new_dir;
 
     private FilesSD_Adapter adapter;
 
@@ -65,6 +70,7 @@ public class FileDialogFragment extends DialogFragment// implements View.OnClick
         (tvUp = (TextView)view.findViewById(R.id.tv_up)).setOnClickListener(clickListener);
         (tvOk = (TextView)view.findViewById(R.id.tv_ok)).setOnClickListener(clickListener);
         (tvCancel = (TextView)view.findViewById(R.id.tv_cancel)).setOnClickListener(clickListener);
+        (tv_new_dir = (TextView)view.findViewById(R.id.tv_new)).setOnClickListener(clickListener);
 
         listFiles.setOnItemClickListener(itemClickListener);
 
@@ -138,7 +144,44 @@ public class FileDialogFragment extends DialogFragment// implements View.OnClick
 
                     this_dialog.dismiss();
                     break;
+                case R.id.tv_new:
+                    dialogNewDir();
+                    break;
             }
         }
     };
+
+    private void dialogNewDir()
+    {
+        final EditText et = new EditText(getContext());
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.new_dir)
+                .setView(et)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        File dir;
+                        switch(adapter.createDir(et.getText().toString()))
+                        {
+                            case FilesSD_Adapter.DIR_EXITS:
+                                Toast.makeText(getContext(), getResources().getText(R.string.dir_exits),
+                                        Toast.LENGTH_LONG).show();
+                                break;
+                            case FilesSD_Adapter.CREATE_DIR_ERROR:
+                                Toast.makeText(getContext(), getResources().getText(R.string.can_not_create_a_dir),
+                                        Toast.LENGTH_LONG).show();
+                                break;
+                            case FilesSD_Adapter.CREATE_DIR_OK:
+                                dir = new File(adapter.getRootPath().getAbsolutePath() + "/" +
+                                        et.getText().toString());
+                                if(adapter.setRootPath(dir))
+                                    tv_path.setText(dir.getAbsolutePath());
+                                break;
+                        }
+                    }
+                });
+        dialog.create().show();
+    }
 }
